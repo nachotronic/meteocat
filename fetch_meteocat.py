@@ -30,16 +30,17 @@ def main():
             except: pass
 
     rows = [r for r in rows if "temperatura" in r]
+
     rows.sort(key=lambda r: r["nom"])
     print(f"{len(rows)} estacions amb dades")
 
     with open("meteocat.csv","w",newline="",encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["nom","lat","lon","comarca","altitud","temperatura","humitat","precipitacio","vent"], extrasaction="ignore")
+        w = csv.DictWriter(f, fieldnames=["nom","lat","lon","comarca","altitud","temperatura","humitat","precipitacio","vent"])
         w.writeheader()
         w.writerows(rows)
 
-   now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-open("last_update.txt","w").write(now)
-print("Timestamp:", now)
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    open("last_update.txt","w").write(now)
+    print("Timestamp:", now)
 
 main()
