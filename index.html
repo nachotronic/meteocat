@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteocat — Dades en viu</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #f4f1eb;
+    color: #2a2a2a;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 2rem 2.5rem 1.5rem;
+    border-bottom: 1px solid #d8d2c4;
+    background: #f4f1eb;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: normal;
+    letter-spacing: -0.02em;
+    color: #1a1a1a;
+  }
+
+  h1 span {
+    color: #5a8a3c;
+    font-style: italic;
+  }
+
+  #last-update {
+    font-size: 0.75rem;
+    color: #888;
+    font-family: 'Courier New', monospace;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.45rem 1.1rem;
+    border: 1.5px solid #c8c0b0;
+    background: transparent;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-family: 'Georgia', serif;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.15s;
+  }
+
+  .btn:hover {
+    border-color: #5a8a3c;
+    color: #5a8a3c;
+  }
+
+  .btn.active {
+    background: #5a8a3c;
+    border-color: #5a8a3c;
+    color: white;
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 0;
+    height: calc(100vh - 130px);
+  }
+
+  #map-container {
+    position: relative;
+    overflow: hidden;
+    background: #b8d0e0;
+  }
+
+  #map-svg { width: 100%; height: 100%; display: block; }
+
+  #tooltip {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #e0d8cc;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    pointer-events: none;
+    z-index: 10;
+    min-width: 160px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+
+  #tooltip .tip-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+    color: #1a1a1a;
+  }
+
+  #tooltip .tip-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+  }
+
+  #tooltip .tip-sub {
+    color: #888;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    font-family: 'Courier New', monospace;
+  }
+
+  aside {
+    background: #eeeae0;
+    border-left: 1px solid #d8d2c4;
+    padding: 1.5rem 1.25rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .stat-block label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-block .stat-val {
+    font-size: 1.8rem;
+    font-weight: normal;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+
+  .stat-block .stat-val span {
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  .stat-block .stat-loc {
+    font-size: 0.75rem;
+    color: #777;
+    margin-top: 0.2rem;
+    font-style: italic;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #d8d2c4;
+  }
+
+  .legend-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin-bottom: 0.6rem;
+  }
+
+  .legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: #555;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(255,255,255,0.6);
+  }
+
+  #loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #b8d0e0;
+    font-size: 0.9rem;
+    color: #555;
+    font-family: Georgia, serif;
+    font-style: italic;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 1rem;
+    font-size: 0.68rem;
+    color: rgba(0,0,0,0.4);
+    font-family: 'Courier New', monospace;
+    pointer-events: none;
+  }
+
+  @media (max-width: 700px) {
+    main { grid-template-columns: 1fr; height: auto; }
+    aside { display: none; }
+    header { padding: 1rem 1.25rem; }
+    h1 { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>Meteocat <span>Catalunya</span></h1>
+    <div id="last-update">carregant…</div>
+  </div>
+  <div class="buttons">
+    <button class="btn active" data-var="temperatura">🌡 Temperatura</button>
+    <button class="btn" data-var="humitat">💧 Humitat</button>
+    <button class="btn" data-var="precipitacio">🌧 Precipitació</button>
+    <button class="btn" data-var="vent">💨 Vent</button>
+  </div>
+</header>
+
+<main>
+  <div id="map-container">
+    <div id="loading">Carregant dades de Meteocat…</div>
+    <svg id="map-svg"></svg>
+    <div id="tooltip">
+      <div class="tip-name" id="tip-name"></div>
+      <div class="tip-value" id="tip-value"></div>
+      <div class="tip-sub" id="tip-sub"></div>
+    </div>
+    <footer>Font: Dades Obertes Catalunya / Meteocat XEMA · Actualització horària</footer>
+  </div>
+
+  <aside>
+    <div class="stat-block">
+      <label>Màxim</label>
+      <div class="stat-val" id="stat-max">—</div>
+      <div class="stat-loc" id="stat-max-loc"></div>
+    </div>
+    <div class="stat-block">
+      <label>Mínim</label>
+      <div class="stat-val" id="stat-min">—</div>
+      <div class="stat-loc" id="stat-min-loc"></div>
+    </div>
+    <div class="stat-block">
+      <label>Mitjana</label>
+      <div class="stat-val" id="stat-avg">—</div>
+      <div class="stat-loc" id="stat-count"></div>
+    </div>
+    <hr class="divider">
+    <div>
+      <div class="legend-title" id="legend-title">Temperatura (°C)</div>
+      <div class="legend-items" id="legend-items"></div>
+    </div>
+  </aside>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+const CSV_URL = "https://raw.githubusercontent.com/nachotronic/meteocat/main/meteocat.csv";
+
+const CONFIGS = {
+  temperatura:  { label: "Temperatura (°C)", unit: "°C",  breaks: [5,12,18,23,28], colors: ["#85B7EB","#5DCAA5","#1D9E75","#EF9F27","#D85A30","#993C1D"], legends: ["< 5°C","5–12°C","12–18°C","18–23°C","23–28°C","≥ 28°C"] },
+  humitat:      { label: "Humitat relativa (%)", unit: "%", breaks: [40,55,70,85], colors: ["#FAC775","#B5D4F4","#85B7EB","#378ADD","#185FA5"], legends: ["< 40%","40–55%","55–70%","70–85%","≥ 85%"] },
+  precipitacio: { label: "Precipitació (mm)", unit: "mm", breaks: [0.1,2,10,30], colors: ["#D3D1C7","#9FE1CB","#378ADD","#185FA5","#042C53"], legends: ["0 mm","< 2 mm","2–10 mm","10–30 mm","≥ 30 mm"] },
+  vent:         { label: "Velocitat del vent (m/s)", unit: "m/s", breaks: [2,5,10,16], colors: ["#C0DD97","#1D9E75","#378ADD","#EF9F27","#D85A30"], legends: ["< 2 m/s","2–5","5–10","10–16","≥ 16"] }
+};
+
+const CAT = {"08":1,"17":1,"25":1,"43":1};
+let allData = [], curVar = "temperatura", dots, projection;
+
+function getColor(v, cfg) {
+  if (v == null || v === "") return "#ccc";
+  for (let i = 0; i < cfg.breaks.length; i++) if (v < cfg.breaks[i]) return cfg.colors[i];
+  return cfg.colors[cfg.colors.length - 1];
+}
+
+function updateStats(cfg) {
+  const vals = allData.filter(d => d[curVar] !== "" && d[curVar] != null);
+  if (!vals.length) return;
+  const mx = vals.reduce((a,b) => +a[curVar] > +b[curVar] ? a : b);
+  const mn = vals.reduce((a,b) => +a[curVar] < +b[curVar] ? a : b);
+  const avg = vals.reduce((s,d) => s + +d[curVar], 0) / vals.length;
+  document.getElementById("stat-max").innerHTML = `${(+mx[curVar]).toFixed(1)}<span> ${cfg.unit}</span>`;
+  document.getElementById("stat-max-loc").textContent = mx.nom;
+  document.getElementById("stat-min").innerHTML = `${(+mn[curVar]).toFixed(1)}<span> ${cfg.unit}</span>`;
+  document.getElementById("stat-min-loc").textContent = mn.nom;
+  document.getElementById("stat-avg").innerHTML = `${avg.toFixed(1)}<span> ${cfg.unit}</span>`;
+  document.getElementById("stat-count").textContent = `${vals.length} estacions`;
+}
+
+function updateLegend(cfg) {
+  document.getElementById("legend-title").textContent = cfg.label;
+  document.getElementById("legend-items").innerHTML = cfg.legends.map((l,i) =>
+    `<div class="legend-item"><span class="legend-dot" style="background:${cfg.colors[i]}"></span>${l}</div>`
+  ).join("");
+}
+
+function switchVar(v) {
+  curVar = v;
+  const cfg = CONFIGS[v];
+  document.querySelectorAll(".btn").forEach(b => b.classList.toggle("active", b.dataset.var === v));
+  if (dots) dots.attr("fill", d => getColor(+d[v], cfg));
+  updateStats(cfg);
+  updateLegend(cfg);
+}
+
+async function buildMap(data) {
+  allData = data;
+  const container = document.getElementById("map-container");
+  const W = container.clientWidth, H = container.clientHeight;
+
+  projection = d3.geoMercator().center([1.72, 41.68]).scale(W * 8).translate([W/2, H/2]);
+  const path = d3.geoPath(projection);
+
+  const svg = d3.select("#map-svg").attr("viewBox", `0 0 ${W} ${H}`);
+
+  const [world, esData] = await Promise.all([
+    d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json"),
+    d3.json("https://cdn.jsdelivr.net/npm/es-atlas@0.5.0/es/provinces.json").catch(() => null)
+  ]);
+
+  svg.append("g").selectAll("path")
+    .data(topojson.feature(world, world.objects.countries).features)
+    .join("path").attr("d", path)
+    .attr("fill", d => d.id === "724" ? "#d8e6c4" : "#e2e9d4")
+    .attr("stroke", "white").attr("stroke-width", 0.4);
+
+  if (esData) {
+    const key = Object.keys(esData.objects)[0];
+    svg.append("g").selectAll("path")
+      .data(topojson.feature(esData, esData.objects[key]).features)
+      .join("path").attr("d", path)
+      .attr("fill", d => CAT[String(d.id||"").padStart(2,"0")] ? "#cce0a8" : "none")
+      .attr("stroke", d => CAT[String(d.id||"").padStart(2,"0")] ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.25)")
+      .attr("stroke-width", d => CAT[String(d.id||"").padStart(2,"0")] ? 0.8 : 0.3);
+  }
+
+  const tip = document.getElementById("tooltip");
+  const cfg = CONFIGS[curVar];
+
+  dots = svg.append("g").selectAll("circle")
+    .data(data).join("circle")
+    .attr("cx", d => projection([+d.lon, +d.lat])[0])
+    .attr("cy", d => projection([+d.lon, +d.lat])[1])
+    .attr("r", 7)
+    .attr("fill", d => getColor(+d[curVar], cfg))
+    .attr("stroke", "white").attr("stroke-width", 1.5)
+    .attr("fill-opacity", 0.92)
+    .style("cursor", "pointer")
+    .on("mousemove", function(event, d) {
+      const cfg = CONFIGS[curVar];
+      const val = d[curVar] !== "" ? (+d[curVar]).toFixed(1) + " " + cfg.unit : "—";
+      const col = getColor(+d[curVar], cfg);
+      document.getElementById("tip-name").textContent = d.nom;
+      document.getElementById("tip-value").textContent = val;
+      document.getElementById("tip-value").style.color = col;
+      document.getElementById("tip-sub").innerHTML =
+        `${d.comarca}${d.altitud ? " · " + d.altitud + " m" : ""}<br>` +
+        `🌡 ${d.temperatura || "—"}°C &nbsp; 💧 ${d.humitat || "—"}% &nbsp; 💨 ${d.vent || "—"} m/s`;
+      const rect = container.getBoundingClientRect();
+      let tx = event.clientX - rect.left + 14;
+      let ty = event.clientY - rect.top - 10;
+      if (tx + 180 > W) tx = event.clientX - rect.left - 185;
+      tip.style.left = tx + "px";
+      tip.style.top  = ty + "px";
+      tip.style.display = "block";
+    })
+    .on("mouseleave", () => tip.style.display = "none");
+
+  document.getElementById("loading").style.display = "none";
+  updateStats(cfg);
+  updateLegend(cfg);
+}
+
+// Load CSV
+Papa.parse(CSV_URL, {
+  download: true,
+  header: true,
+  complete: results => {
+    const data = results.data.filter(d => d.lat && d.lon);
+    buildMap(data);
+
+    // Show last update
+    fetch("https://raw.githubusercontent.com/nachotronic/meteocat/main/last_update.txt")
+      .then(r => r.text()).then(t => {
+        document.getElementById("last-update").textContent = "↻ " + t.trim();
+      }).catch(() => {});
+  },
+  error: () => {
+    document.getElementById("loading").textContent = "Error carregant les dades.";
+  }
+});
+
+document.querySelectorAll(".btn").forEach(b =>
+  b.addEventListener("click", () => switchVar(b.dataset.var))
+);
+</script>
+</body>
+</html>
