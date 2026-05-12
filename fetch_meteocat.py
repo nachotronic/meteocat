@@ -35,7 +35,7 @@ def main():
     print(f"{len(rows)} estacions amb dades")
 
     with open("meteocat.csv","w",newline="",encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["nom","lat","lon","comarca","altitud","temperatura","humitat","precipitacio","vent"])
+        w = csv.DictWriter(f, fieldnames=["nom","lat","lon","comarca","altitud","temperatura","humitat","precipitacio","vent"], extrasaction="ignore")
         w.writeheader()
         w.writerows(rows)
 
