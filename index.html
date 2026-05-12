@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meteocat — Dades en viu</title>
+<title>Meteocat · Dades en viu</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'Georgia', serif;
@@ -36,10 +36,7 @@
     color: #1a1a1a;
   }
 
-  h1 span {
-    color: #5a8a3c;
-    font-style: italic;
-  }
+  h1 span { color: #5a8a3c; font-style: italic; }
 
   #last-update {
     font-size: 0.75rem;
@@ -47,11 +44,7 @@
     font-family: 'Courier New', monospace;
   }
 
-  .buttons {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
+  .buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
   .btn {
     padding: 0.45rem 1.1rem;
@@ -65,16 +58,8 @@
     transition: all 0.15s;
   }
 
-  .btn:hover {
-    border-color: #5a8a3c;
-    color: #5a8a3c;
-  }
-
-  .btn.active {
-    background: #5a8a3c;
-    border-color: #5a8a3c;
-    color: white;
-  }
+  .btn:hover { border-color: #5a8a3c; color: #5a8a3c; }
+  .btn.active { background: #5a8a3c; border-color: #5a8a3c; color: white; }
 
   main {
     display: grid;
@@ -105,25 +90,9 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
   }
 
-  #tooltip .tip-name {
-    font-weight: bold;
-    font-size: 0.9rem;
-    margin-bottom: 0.35rem;
-    color: #1a1a1a;
-  }
-
-  #tooltip .tip-value {
-    font-size: 1.4rem;
-    font-weight: bold;
-    margin-bottom: 0.2rem;
-  }
-
-  #tooltip .tip-sub {
-    color: #888;
-    font-size: 0.75rem;
-    line-height: 1.6;
-    font-family: 'Courier New', monospace;
-  }
+  #tooltip .tip-name { font-weight: bold; font-size: 0.9rem; margin-bottom: 0.35rem; color: #1a1a1a; }
+  #tooltip .tip-value { font-size: 1.4rem; font-weight: bold; margin-bottom: 0.2rem; }
+  #tooltip .tip-sub { color: #888; font-size: 0.75rem; line-height: 1.6; font-family: 'Courier New', monospace; }
 
   aside {
     background: #eeeae0;
@@ -135,90 +104,30 @@
     gap: 1.5rem;
   }
 
-  .stat-block label {
-    display: block;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #999;
-    margin-bottom: 0.3rem;
-  }
+  .stat-block label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #999; margin-bottom: 0.3rem; }
+  .stat-block .stat-val { font-size: 1.8rem; font-weight: normal; color: #1a1a1a; line-height: 1; }
+  .stat-block .stat-val span { font-size: 0.9rem; color: #888; }
+  .stat-block .stat-loc { font-size: 0.75rem; color: #777; margin-top: 0.2rem; font-style: italic; }
 
-  .stat-block .stat-val {
-    font-size: 1.8rem;
-    font-weight: normal;
-    color: #1a1a1a;
-    line-height: 1;
-  }
+  .divider { border: none; border-top: 1px solid #d8d2c4; }
 
-  .stat-block .stat-val span {
-    font-size: 0.9rem;
-    color: #888;
-  }
-
-  .stat-block .stat-loc {
-    font-size: 0.75rem;
-    color: #777;
-    margin-top: 0.2rem;
-    font-style: italic;
-  }
-
-  .divider {
-    border: none;
-    border-top: 1px solid #d8d2c4;
-  }
-
-  .legend-title {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #999;
-    margin-bottom: 0.6rem;
-  }
-
-  .legend-items {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.78rem;
-    color: #555;
-  }
-
-  .legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    border: 1.5px solid rgba(255,255,255,0.6);
-  }
+  .legend-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #999; margin-bottom: 0.6rem; }
+  .legend-items { display: flex; flex-direction: column; gap: 0.35rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: #555; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.6); }
 
   #loading {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
     background: #b8d0e0;
-    font-size: 0.9rem;
-    color: #555;
-    font-family: Georgia, serif;
-    font-style: italic;
+    font-size: 0.9rem; color: #555;
+    font-family: Georgia, serif; font-style: italic;
   }
 
   footer {
-    position: absolute;
-    bottom: 0.75rem;
-    left: 1rem;
-    font-size: 0.68rem;
-    color: rgba(0,0,0,0.4);
-    font-family: 'Courier New', monospace;
-    pointer-events: none;
+    position: absolute; bottom: 0.75rem; left: 1rem;
+    font-size: 0.68rem; color: rgba(0,0,0,0.4);
+    font-family: 'Courier New', monospace; pointer-events: none;
   }
 
   @media (max-width: 700px) {
@@ -253,7 +162,7 @@
       <div class="tip-value" id="tip-value"></div>
       <div class="tip-sub" id="tip-sub"></div>
     </div>
-    <footer>Font: Dades Obertes Catalunya / Meteocat XEMA · Actualització horària</footer>
+    <footer>Font: Dades Obertes Catalunya / Meteocat XEMA · Actualització cada 30 min</footer>
   </div>
 
   <aside>
@@ -287,25 +196,38 @@
 const TS = Date.now();
 const CSV_URL = "https://raw.githubusercontent.com/nachotronic/meteocat/main/meteocat.csv?t=" + TS;
 const UPD_URL = "https://raw.githubusercontent.com/nachotronic/meteocat/main/last_update.txt?t=" + TS;
+const CAT_IDS = {"08":1,"17":1,"25":1,"43":1};
 
 const CONFIGS = {
-  `🌡 ${d.temperatura||"—"}°C &nbsp;(↑${d.temp_max||"—"}° ↓${d.temp_min||"—"}°)<br>💧 ${d.humitat||"—"}% &nbsp; 💨 ${d.vent||"—"} m/s`;
-  humitat:      { label: "Humitat relativa (%)", unit: "%", breaks: [40,55,70,85], colors: ["#FAC775","#B5D4F4","#85B7EB","#378ADD","#185FA5"], legends: ["< 40%","40–55%","55–70%","70–85%","≥ 85%"] },
-  precipitacio: { label: "Precipitació (mm)", unit: "mm", breaks: [0.1,2,10,30], colors: ["#D3D1C7","#9FE1CB","#378ADD","#185FA5","#042C53"], legends: ["0 mm","< 2 mm","2–10 mm","10–30 mm","≥ 30 mm"] },
-  vent:         { label: "Velocitat del vent (m/s)", unit: "m/s", breaks: [2,5,10,16], colors: ["#C0DD97","#1D9E75","#378ADD","#EF9F27","#D85A30"], legends: ["< 2 m/s","2–5","5–10","10–16","≥ 16"] }
+  temperatura:  { label:"Temperatura (°C)", unit:"°C",  breaks:[5,12,18,23,28],   colors:["#85B7EB","#5DCAA5","#1D9E75","#EF9F27","#D85A30","#993C1D"], legends:["< 5°C","5–12°C","12–18°C","18–23°C","23–28°C","≥ 28°C"] },
+  humitat:      { label:"Humitat (%)",       unit:"%",   breaks:[40,55,70,85],     colors:["#FAC775","#B5D4F4","#85B7EB","#378ADD","#185FA5"],            legends:["< 40%","40–55%","55–70%","70–85%","≥ 85%"] },
+  precipitacio: { label:"Precipitació (mm)", unit:"mm",  breaks:[0.1,2,10,30],    colors:["#D3D1C7","#9FE1CB","#378ADD","#185FA5","#042C53"],            legends:["0 mm","< 2 mm","2–10 mm","10–30 mm","≥ 30 mm"] },
+  vent:         { label:"Vent (m/s)",        unit:"m/s", breaks:[2,5,10,16],      colors:["#C0DD97","#1D9E75","#378ADD","#EF9F27","#D85A30"],            legends:["< 2 m/s","2–5","5–10","10–16","≥ 16"] }
 };
 
-const CAT = {"08":1,"17":1,"25":1,"43":1};
+const CITIES = [
+  {name:"Barcelona",  lat:41.389,lon:2.159,  dx:-9, dy:4,  anchor:"end"},
+  {name:"Girona",     lat:41.983,lon:2.822,  dx:9,  dy:-4, anchor:"start"},
+  {name:"Lleida",     lat:41.617,lon:0.620,  dx:-9, dy:4,  anchor:"end"},
+  {name:"Tarragona",  lat:41.119,lon:1.245,  dx:9,  dy:5,  anchor:"start"},
+  {name:"Manresa",    lat:41.728,lon:1.833,  dx:9,  dy:-4, anchor:"start"},
+  {name:"Sabadell",   lat:41.543,lon:2.109,  dx:-9, dy:-4, anchor:"end"},
+  {name:"Terrassa",   lat:41.563,lon:2.008,  dx:-9, dy:8,  anchor:"end"},
+  {name:"Reus",       lat:41.156,lon:1.105,  dx:9,  dy:-4, anchor:"start"},
+  {name:"Figueres",   lat:42.267,lon:2.961,  dx:-9, dy:-4, anchor:"end"},
+  {name:"Mataró",     lat:41.539,lon:2.446,  dx:9,  dy:-4, anchor:"start"},
+];
+
 let allData = [], curVar = "temperatura", dots, projection;
 
 function getColor(v, cfg) {
-  if (v == null || v === "") return "#ccc";
-  for (let i = 0; i < cfg.breaks.length; i++) if (v < cfg.breaks[i]) return cfg.colors[i];
+  if (v == null || v === "" || isNaN(+v)) return "#ccc";
+  for (let i = 0; i < cfg.breaks.length; i++) if (+v < cfg.breaks[i]) return cfg.colors[i];
   return cfg.colors[cfg.colors.length - 1];
 }
 
 function updateStats(cfg) {
-  const vals = allData.filter(d => d[curVar] !== "" && d[curVar] != null);
+  const vals = allData.filter(d => d[curVar] !== "" && !isNaN(+d[curVar]));
   if (!vals.length) return;
   const mx = vals.reduce((a,b) => +a[curVar] > +b[curVar] ? a : b);
   const mn = vals.reduce((a,b) => +a[curVar] < +b[curVar] ? a : b);
@@ -329,7 +251,7 @@ function switchVar(v) {
   curVar = v;
   const cfg = CONFIGS[v];
   document.querySelectorAll(".btn").forEach(b => b.classList.toggle("active", b.dataset.var === v));
-  if (dots) dots.attr("fill", d => getColor(+d[v], cfg));
+  if (dots) dots.attr("fill", d => getColor(d[v], cfg));
   updateStats(cfg);
   updateLegend(cfg);
 }
@@ -341,7 +263,6 @@ async function buildMap(data) {
 
   projection = d3.geoMercator().center([1.72, 41.68]).scale(W * 8).translate([W/2, H/2]);
   const path = d3.geoPath(projection);
-
   const svg = d3.select("#map-svg").attr("viewBox", `0 0 ${W} ${H}`);
 
   const [world, esData] = await Promise.all([
@@ -360,10 +281,22 @@ async function buildMap(data) {
     svg.append("g").selectAll("path")
       .data(topojson.feature(esData, esData.objects[key]).features)
       .join("path").attr("d", path)
-      .attr("fill", d => CAT[String(d.id||"").padStart(2,"0")] ? "#cce0a8" : "none")
-      .attr("stroke", d => CAT[String(d.id||"").padStart(2,"0")] ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.25)")
-      .attr("stroke-width", d => CAT[String(d.id||"").padStart(2,"0")] ? 0.8 : 0.3);
+      .attr("fill", d => CAT_IDS[String(d.id||"").padStart(2,"0")] ? "#cce0a8" : "none")
+      .attr("stroke", d => CAT_IDS[String(d.id||"").padStart(2,"0")] ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.25)")
+      .attr("stroke-width", d => CAT_IDS[String(d.id||"").padStart(2,"0")] ? 0.8 : 0.3);
   }
+
+  // Ciutats principals
+  const citiesG = svg.append("g");
+  CITIES.forEach(c => {
+    const [cx, cy] = projection([c.lon, c.lat]);
+    citiesG.append("line").attr("x1",cx-4).attr("y1",cy).attr("x2",cx+4).attr("y2",cy).attr("stroke","rgba(20,40,10,.6)").attr("stroke-width",1.2);
+    citiesG.append("line").attr("x1",cx).attr("y1",cy-4).attr("x2",cx).attr("y2",cy+4).attr("stroke","rgba(20,40,10,.6)").attr("stroke-width",1.2);
+    citiesG.append("text").attr("x",cx+c.dx).attr("y",cy+c.dy).attr("text-anchor",c.anchor)
+      .attr("font-size",9).attr("font-family","Georgia,serif").attr("font-style","italic")
+      .attr("stroke","rgba(255,255,255,.85)").attr("stroke-width",3).attr("paint-order","stroke")
+      .attr("fill","rgba(20,40,10,.75)").text(c.name);
+  });
 
   const tip = document.getElementById("tooltip");
   const cfg = CONFIGS[curVar];
@@ -373,27 +306,26 @@ async function buildMap(data) {
     .attr("cx", d => projection([+d.lon, +d.lat])[0])
     .attr("cy", d => projection([+d.lon, +d.lat])[1])
     .attr("r", 7)
-    .attr("fill", d => getColor(+d[curVar], cfg))
+    .attr("fill", d => getColor(d[curVar], cfg))
     .attr("stroke", "white").attr("stroke-width", 1.5)
     .attr("fill-opacity", 0.92)
     .style("cursor", "pointer")
     .on("mousemove", function(event, d) {
       const cfg = CONFIGS[curVar];
       const val = d[curVar] !== "" ? (+d[curVar]).toFixed(1) + " " + cfg.unit : "—";
-      const col = getColor(+d[curVar], cfg);
+      const col = getColor(d[curVar], cfg);
       document.getElementById("tip-name").textContent = d.nom;
       document.getElementById("tip-value").textContent = val;
       document.getElementById("tip-value").style.color = col;
       document.getElementById("tip-sub").innerHTML =
-        `${d.comarca}${d.altitud ? " · " + d.altitud + " m" : ""}<br>` +
-        `🌡 ${d.temperatura || "—"}°C &nbsp; 💧 ${d.humitat || "—"}% &nbsp; 💨 ${d.vent || "—"} m/s`;
+        (d.comarca||"") + (d.altitud ? " · " + d.altitud + " m" : "") + "<br>" +
+        (d.temp_max ? "Max " + d.temp_max + "° / Min " + d.temp_min + "°<br>" : "") +
+        "Hum " + (d.humitat||"—") + "% &nbsp; Vent " + (d.vent||"—") + " m/s";
       const rect = container.getBoundingClientRect();
       let tx = event.clientX - rect.left + 14;
       let ty = event.clientY - rect.top - 10;
       if (tx + 180 > W) tx = event.clientX - rect.left - 185;
-      tip.style.left = tx + "px";
-      tip.style.top  = ty + "px";
-      tip.style.display = "block";
+      tip.style.left = tx + "px"; tip.style.top = ty + "px"; tip.style.display = "block";
     })
     .on("mouseleave", () => tip.style.display = "none");
 
@@ -402,29 +334,15 @@ async function buildMap(data) {
   updateLegend(cfg);
 }
 
-// Load CSV
 Papa.parse(CSV_URL, {
-  download: true,
-  header: true,
+  download: true, header: true,
   complete: results => {
-    const data = results.data.filter(d => d.lat && d.lon);
-    buildMap(data);
-
-    // Show last update
+    buildMap(results.data.filter(d => d.lat && d.lon && +d.lat));
     fetch(UPD_URL).then(r => r.text()).then(t => {
-  const utcStr = t.trim().replace(" UTC", "Z").replace(" ", "T");
-  const date = new Date(utcStr);
-  const hora = date.toLocaleString("ca-ES", {
-    timeZone: "Europe/Madrid",
-    day: "2-digit", month: "2-digit", year: "numeric",
-    hour: "2-digit", minute: "2-digit"
-  });
-  document.getElementById("last-update").textContent = "↻ " + hora;
-}).catch(() => {});
+      document.getElementById("last-update").textContent = "↻ " + t.trim();
+    }).catch(() => {});
   },
-  error: () => {
-    document.getElementById("loading").textContent = "Error carregant les dades.";
-  }
+  error: () => document.getElementById("loading").textContent = "Error carregant les dades."
 });
 
 document.querySelectorAll(".btn").forEach(b =>
