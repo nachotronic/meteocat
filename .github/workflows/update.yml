@@ -21,8 +21,7 @@ jobs:
       - run: |
           git config --global user.email "bot@github.com"
           git config --global user.name "bot"
-          git stash
-          git pull --rebase
-          git add meteocat.csv last_update.txt
+          git pull origin main
+          git add -f meteocat.csv last_update.txt
           git commit -m "update $(date -u '+%Y-%m-%d %H:%M')" --allow-empty
-          git push
+          git push origin main
