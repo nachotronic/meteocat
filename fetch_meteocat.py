@@ -38,7 +38,8 @@ def main():
         w.writeheader()
         w.writerows(rows)
 
-    open("last_update.txt","w").write(datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"))
-    print("Fet!")
+   now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+open("last_update.txt","w").write(now)
+print("Timestamp:", now)
 
 main()
