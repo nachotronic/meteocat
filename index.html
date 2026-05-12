@@ -289,7 +289,7 @@ const CSV_URL = "https://raw.githubusercontent.com/nachotronic/meteocat/main/met
 const UPD_URL = "https://raw.githubusercontent.com/nachotronic/meteocat/main/last_update.txt?t=" + TS;
 
 const CONFIGS = {
-  temperatura:  { label: "Temperatura (°C)", unit: "°C",  breaks: [5,12,18,23,28], colors: ["#85B7EB","#5DCAA5","#1D9E75","#EF9F27","#D85A30","#993C1D"], legends: ["< 5°C","5–12°C","12–18°C","18–23°C","23–28°C","≥ 28°C"] },
+  `🌡 ${d.temperatura||"—"}°C &nbsp;(↑${d.temp_max||"—"}° ↓${d.temp_min||"—"}°)<br>💧 ${d.humitat||"—"}% &nbsp; 💨 ${d.vent||"—"} m/s`;
   humitat:      { label: "Humitat relativa (%)", unit: "%", breaks: [40,55,70,85], colors: ["#FAC775","#B5D4F4","#85B7EB","#378ADD","#185FA5"], legends: ["< 40%","40–55%","55–70%","70–85%","≥ 85%"] },
   precipitacio: { label: "Precipitació (mm)", unit: "mm", breaks: [0.1,2,10,30], colors: ["#D3D1C7","#9FE1CB","#378ADD","#185FA5","#042C53"], legends: ["0 mm","< 2 mm","2–10 mm","10–30 mm","≥ 30 mm"] },
   vent:         { label: "Velocitat del vent (m/s)", unit: "m/s", breaks: [2,5,10,16], colors: ["#C0DD97","#1D9E75","#378ADD","#EF9F27","#D85A30"], legends: ["< 2 m/s","2–5","5–10","10–16","≥ 16"] }
