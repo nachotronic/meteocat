@@ -411,10 +411,16 @@ Papa.parse(CSV_URL, {
     buildMap(data);
 
     // Show last update
-    fetch("https://raw.githubusercontent.com/nachotronic/meteocat/main/last_update.txt")
-      .then(r => r.text()).then(t => {
-        document.getElementById("last-update").textContent = "↻ " + t.trim();
-      }).catch(() => {});
+    fetch(UPD_URL).then(r => r.text()).then(t => {
+  const utcStr = t.trim().replace(" UTC", "Z").replace(" ", "T");
+  const date = new Date(utcStr);
+  const hora = date.toLocaleString("ca-ES", {
+    timeZone: "Europe/Madrid",
+    day: "2-digit", month: "2-digit", year: "numeric",
+    hour: "2-digit", minute: "2-digit"
+  });
+  document.getElementById("last-update").textContent = "↻ " + hora;
+}).catch(() => {});
   },
   error: () => {
     document.getElementById("loading").textContent = "Error carregant les dades.";
